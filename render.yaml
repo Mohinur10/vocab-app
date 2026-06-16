@@ -1,0 +1,30 @@
+services:
+  # Backend FastAPI Service
+  - type: web
+    name: vocab-backend
+    env: docker
+    plan: free
+    rootDir: backend
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "10080"
+
+  # Frontend React Service
+  - type: web
+    name: vocab-frontend
+    env: docker
+    plan: free
+    rootDir: frontend
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: vocab-backend
+          property: host
